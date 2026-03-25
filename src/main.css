@@ -18,7 +18,10 @@
 @theme {
   --color-primary: #0b0d14;
   --color-secundary: #c4972e;
+  --color-third: #d68e02;
+  --color-fourth: #f3cb69;
   --color-font-secundary: #576273;
+  --color-font-third: #4e390e;
 }
 
 /* Reset */
@@ -105,4 +108,18 @@ mark,
 audio,
 video {
   font-family: "Inter", sans-serif;
+}
+
+/* Estilização global */
+/* Background */
+
+.bg-radial-custom {
+  background: radial-gradient(circle, rgba(11, 38, 65, 0.4) 0%, rgba(11, 38, 65, 0) 70%);
+}
+
+body {
+  @apply flex justify-center min-h-screen bg-primary gap-2.5;
+
+  background-color: #0b0d14; /* base escura */
+  background-image: radial-gradient(circle, rgba(11, 38, 65, 0.4) 0%, rgba(11, 38, 65, 0) 70%);
 }
