@@ -1,5 +1,6 @@
 import { HeroSection } from "./components/HeroSection/HeroSection";
 import { ChampionCard } from "./components/Result/ChampionCard";
+import { ItemsCard } from "./components/Result/ItemsCard";
 import { RunesPrimary } from "./components/Result/RunesPrimary";
 import { RunesSecundary } from "./components/Result/RunesSecondary";
 import { SpellsCard } from "./components/Result/SpellsCard";
@@ -13,6 +14,7 @@ function App() {
         <SpellsCard />
         <RunesPrimary />
         <RunesSecundary />
+        <ItemsCard />
       </section>
     </>
   );
