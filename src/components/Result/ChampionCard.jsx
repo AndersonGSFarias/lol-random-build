@@ -9,7 +9,7 @@ function ChampionCard() {
         w-[18.75rem] 
         h-[10.313rem] 
         flex justify-start items-end
-        border-2 border-solid border-secundary 
+        border-1 border-solid border-secundary 
         rounded-[10px]
         bg-cover bg-center
         shadow-[inset_0_-10px_30px_5px_#000000]
