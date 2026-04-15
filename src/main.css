@@ -118,8 +118,7 @@ video {
 }
 
 body {
-  @apply flex justify-center min-h-screen bg-primary gap-2.5;
-
-  background-color: #0b0d14; /* base escura */
+  @apply flex flex-col justify-center items-center min-h-screen bg-primary w-full;
+  background-color: #0b0d14;
   background-image: radial-gradient(circle, rgba(11, 38, 65, 0.4) 0%, rgba(11, 38, 65, 0) 70%);
 }

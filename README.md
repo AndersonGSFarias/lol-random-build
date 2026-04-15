@@ -45,7 +45,7 @@ Os dados utilizados são obtidos através do **Data Dragon**, serviço oficial d
 - React
 - JavaScript
 - Tailwind CSS
-- DaisyUI
+- Lucide
 - Vite
 
 ---
