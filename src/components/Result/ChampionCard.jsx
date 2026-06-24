@@ -1,7 +1,9 @@
+import noReturn from "../../assets/no-return/sem-resposta-sem-borda.png";
+import noReturnWideScreen from "../../assets/no-return/sem-resposta-wide-sem-borda.png";
+
 // Card do Herói
-function ChampionCard() {
+function ChampionCard({ champion }) {
   return (
-    // Background
     <section
       className="
         relative
@@ -15,26 +17,29 @@ function ChampionCard() {
         shadow-[inset_0_-10px_30px_5px_#000000]
       "
       style={{
-        backgroundImage: `url('https://wiki.leagueoflegends.com/en-us/images/Irelia_OriginalSkin.jpg?12499')`,
+        backgroundImage: `url(${champion?.splash || noReturnWideScreen})`,
       }}
     >
+      {/* Overlay */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent rounded-[10px]"></div>
-      {/* Sobreamento interno */}
-      <div className="relative z-10"></div>
-      {/* Informações  */}
-      <div className="flex gap-[0.75rem] p-[0.625rem]">
-        {/* Icone do champ */}
-        <div className="w-[2.625rem] h-[2.625rem] rounded-[10px] bg-secundary"></div>
+
+      {/* Conteúdo */}
+      <div className="relative z-10 flex gap-[0.75rem] p-[0.625rem]">
+        {/* Ícone do champ */}
+        <div className="w-[2.625rem] h-[2.625rem] border border-secundary rounded-[10px] overflow-hidden">
+          <img src={champion?.icon || noReturn} alt={champion?.name || "Campeão não selecionado"} className="w-full h-full object-cover rounded-[15px] scale-110" />
+        </div>
 
         <div>
-          {/* Titulo do champ */}
-          <h4 className="eb-garamond uppercase bg-linear-to-r from-third to-fourth bg-clip-text text-transparent font-bold text-[0.75rem] mt-1">Irelia</h4>
+          {/* Nome */}
+          <h4 className="eb-garamond uppercase bg-linear-to-r from-third to-fourth bg-clip-text text-transparent font-bold text-[0.75rem] mt-1">{champion?.name || "Campeão"}</h4>
 
-          <div className="flex items-center gap-1">
-            {/* Icone da role */}
-            <img src="https://wiki.leagueoflegends.com/en-us/images/All_roles_icon.png?d9e6c" alt="" className="w-[1rem] " />
+          <div className="flex items-center gap-3">
+            {/* Ícone da role */}
+            {champion?.roleIcon ? <img src={champion.roleIcon} alt="role" className="w-[1rem]" /> : <span className=" Inter text-secundary text-[0.75rem] font-medium  ">?</span>}
+
             {/* Nome da role */}
-            <span className="Inter text-[1rem] text-white font-bold">Meio</span>
+            <span className="Inter text-[0.75rem] text-white font-bold">{champion?.role || "Rota"}</span>
           </div>
         </div>
       </div>
