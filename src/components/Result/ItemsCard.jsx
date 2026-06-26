@@ -1,69 +1,58 @@
-function ItemsCard() {
+import noReturnRounded from "../../assets/no-return/sem-resposta-sem-borda.png";
+
+function ItemsCard({ items }) {
   return (
     <section
       className="
         bg-[#080E1B] 
         w-[18.75rem] 
+        xl:w-full
+        xl:h-[11.063rem]
         flex flex-col
         border-1 border-solid border-secundary 
         rounded-[10px]
         px-[1.25rem]
         py-[0.625rem]
-        mb-[9.375rem]
-        "
+      "
     >
-      {/* Título com a linha embaixo */}
-      <h5 className="text-[#515B6B] text-[1rem] border-b border-[#252937] pb-2 mb-6">Itens</h5>
+      <div className="flex border-b border-[#252937] pb-[0.625rem] pl-[0.7rem] border-b-1 mb-[0.625rem]">
+        <img src="/src/assets/itens/shop-button-mobile.png" alt="" className="w-[1.625rem] h-[1.625rem] rounded-2xl " />
+        <h5 className="text-[#515B6B] text-[1rem] pl-[1.5rem] ">Itens</h5>
+      </div>
 
-      {/* Grid */}
-      <div className="grid grid-cols-3 gap-y-6 gap-x-2 text-[#7C7D80] text-[0.75rem] mb-6">
-        {/* Item 1 */}
-        <figure className="flex flex-col items-center text-center gap-2">
-          <img src="https://wiki.leagueoflegends.com/en-us/images/Fiendhunter_Bolts_item.png?7596c" alt="Dardos de Caça-Demônios" className="w-12 h-12 rounded-lg" /* Tamanho fixo e borda arredondada */ />
-          <figcaption className="leading-tight w-[6rem]">
-            <span>Dardos de Caça-Demonios</span>
-          </figcaption>
-        </figure>
+      <div
+        className="
+    grid
+    grid-cols-3
+    gap-x-4
+    gap-y-4
 
-        {/* Item 2 */}
-        <figure className="flex flex-col items-center text-center gap-2">
-          <img src="https://wiki.leagueoflegends.com/en-us/images/Iceborn_Gauntlet_item.png" alt="Manopla dos Glacinatas" className="w-12 h-12 rounded-lg" />
-          <figcaption className="leading-tight w-[6rem]">
-            <span>Manopla dos Glacinatas</span>
-          </figcaption>
-        </figure>
+    xl:grid-cols-[repeat(6,5rem)]
+    xl:gap-x-[2.5rem]
+    xl:gap-y-0
+    xl:justify-center
+  "
+      >
+        {(items?.length ? items : [null, null, null, null, null, null]).map((item, index) => (
+          <figure key={item?.id || index} className="flex flex-col items-center">
+            <img
+              src={item?.icon || noReturnRounded}
+              alt={item?.name || `Item ${index + 1}`}
+              className="
+                  w-[2.875rem] 
+                  xl:w-[5rem]
+                  h-[2.875rem]
+                  xl:h-[5rem]
+                  rounded-[5px] 
+                  border-1 
+                  border-secundary
+                  object-cover
+                "
+            />
 
-        {/* Item 3 */}
-        <figure className="flex flex-col items-center text-center gap-2">
-          <img src="https://wiki.leagueoflegends.com/en-us/images/Mercury%27s_Treads_item.png" alt="Passos de Mercúrio" className="w-12 h-12 rounded-lg" />
-          <figcaption className="leading-tight w-[6rem]">
-            <span>Passos de Mercúrio</span>
-          </figcaption>
-        </figure>
-
-        {/* Item 4 */}
-        <figure className="flex flex-col items-center text-center gap-2">
-          <img src="https://wiki.leagueoflegends.com/en-us/images/Essence_Reaver_item.png" alt="Colhedor de Essência" className="w-12 h-12 rounded-lg" />
-          <figcaption className="leading-tight w-[6rem]">
-            <span>Colhedor de Essência</span>
-          </figcaption>
-        </figure>
-
-        {/* Item 5 */}
-        <figure className="flex flex-col items-center text-center gap-2">
-          <img src="https://wiki.leagueoflegends.com/en-us/images/Bloodthirster_item.png" alt="Sedenta por Sangue" className="w-12 h-12 rounded-lg" />
-          <figcaption className="leading-tight w-[6rem]">
-            <span>Sedenta por Sangue</span>
-          </figcaption>
-        </figure>
-
-        {/* Item 6 */}
-        <figure className="flex flex-col items-center text-center gap-2">
-          <img src="https://wiki.leagueoflegends.com/en-us/images/Black_Cleaver_item.png" alt="Cutelo Negro" className="w-12 h-12 rounded-lg" />
-          <figcaption className="leading-tight w-[6rem]">
-            <span>Cutelo Negro</span>
-          </figcaption>
-        </figure>
+            <figcaption className="text-[#7C7D80] text-[0.625rem] font-medium mt-[0.25rem] text-center leading-tight">{item?.name || `Item ${index + 1}`}</figcaption>
+          </figure>
+        ))}
       </div>
     </section>
   );

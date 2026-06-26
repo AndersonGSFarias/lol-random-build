@@ -117,8 +117,27 @@ video {
   background: radial-gradient(circle, rgba(11, 38, 65, 0.4) 0%, rgba(11, 38, 65, 0) 70%);
 }
 
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
-  @apply flex flex-col justify-center items-center min-h-screen bg-primary w-full;
+  min-height: 100vh;
   background-color: #0b0d14;
   background-image: radial-gradient(circle, rgba(11, 38, 65, 0.4) 0%, rgba(11, 38, 65, 0) 70%);
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
 }
