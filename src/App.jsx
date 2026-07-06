@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { preloadImages } from "./utils/preloadImages";
 
+// Importacao da API da Data Dragon
+import { getDataDragonData } from "./services/dataDragonService";
+import { normalizeDataDragonData } from "./services/dataDragonNormalizer";
+
 // Importacao dos Componentes
 import { HeroSection } from "./components/HeroSection/HeroSection";
 import { ChampionCard } from "./components/Result/ChampionCard";
@@ -10,12 +14,8 @@ import { RunesSecundary } from "./components/Result/RunesSecondary";
 import { SpellsCard } from "./components/Result/SpellsCard";
 import { Footer } from "./components/Footer/Footer";
 
-// Importacao dos Mocks
-import { championsMock } from "./data/championsMock";
+// Importacao do Mock
 import { rolesMock } from "./data/rolesMock";
-import { spellsMock } from "./data/spellsMock";
-import { runePagesMock } from "./data/runePagesMock";
-import { itemsMock } from "./data/itemsMock";
 
 // Códigos de utilidade
 import { getRandomItem, getRandomItems } from "./utils/random";
@@ -27,31 +27,73 @@ function App() {
   const [primaryRune, setPrimaryRune] = useState(null);
   const [secondaryRune, setSecondaryRune] = useState(null);
   const [items, setItems] = useState([]);
+  // ! Temporario
+  const [dataDragonData, setDataDragonData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // !Teste de geração com api
+  useEffect(() => {
+    async function loadDataDragonData() {
+      try {
+        const data = await getDataDragonData();
+        const normalizedData = normalizeDataDragonData(data);
+
+        console.log("Dados normalizados:", normalizedData);
+
+        setDataDragonData(normalizedData);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    loadDataDragonData();
+  }, []);
 
   // Pre-geracao de imagens
   useEffect(() => {
-    const championImages = championsMock.flatMap((champion) => [champion.splash, champion.icon]);
+    async function loadDataDragonData() {
+      try {
+        const data = await getDataDragonData();
+        const normalizedData = normalizeDataDragonData(data);
 
-    const roleImages = rolesMock.map((role) => role.icon);
+        setDataDragonData(normalizedData);
 
-    const spellImages = spellsMock.map((spell) => spell.icon);
+        const championImages = normalizedData.champions.flatMap((champion) => [champion.splash, champion.icon]);
 
-    const itemImages = itemsMock.map((item) => item.icon);
+        const roleImages = rolesMock.map((role) => role.icon);
 
-    const runeImages = runePagesMock.flatMap((runePage) => {
-      const keystoneImages = runePage.keystones.map((keystone) => keystone.icon);
+        const spellImages = normalizedData.spells.map((spell) => spell.icon);
 
-      const slotImages = runePage.slots.flatMap((slot) => slot.map((rune) => rune.icon));
+        const itemImages = normalizedData.items.map((item) => item.icon);
 
-      return [runePage.treeIcon, ...keystoneImages, ...slotImages];
-    });
+        const runeImages = normalizedData.runePages.flatMap((runePage) => {
+          const keystoneImages = runePage.keystones.map((keystone) => keystone.icon);
 
-    preloadImages([...championImages, ...roleImages, ...spellImages, ...itemImages, ...runeImages]);
+          const slotImages = runePage.slots.flatMap((slot) => slot.map((rune) => rune.icon));
+
+          return [runePage.treeIcon, ...keystoneImages, ...slotImages];
+        });
+
+        preloadImages([...championImages, ...roleImages, ...spellImages, ...itemImages, ...runeImages]);
+
+        console.log("Dados normalizados:", normalizedData);
+      } catch (error) {
+        console.error("Erro ao carregar Data Dragon:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    loadDataDragonData();
   }, []);
 
   const handleGenerate = useCallback(() => {
+    if (!dataDragonData) return;
+
     // 🎴 CHAMPION
-    const randomChampion = getRandomItem(championsMock);
+    const randomChampion = getRandomItem(dataDragonData.champions);
 
     // 🎯 ROLE
     const randomRole = getRandomItem(rolesMock);
@@ -65,21 +107,21 @@ function App() {
     setChampion(championWithRole);
 
     // 🎲 SPELLS
-    const selectedSpells = getRandomItems(spellsMock, 2);
+    const selectedSpells = getRandomItems(dataDragonData.spells, 2);
     setSpells(selectedSpells);
 
     // 🔮 RUNAS
-    const generatedPrimaryRune = generatePrimaryRune(runePagesMock);
+    const generatedPrimaryRune = generatePrimaryRune(dataDragonData.runePages);
 
-    const generatedSecondaryRune = generateSecondaryRune(runePagesMock, generatedPrimaryRune.treeId);
+    const generatedSecondaryRune = generateSecondaryRune(dataDragonData.runePages, generatedPrimaryRune.treeId);
 
     setPrimaryRune(generatedPrimaryRune);
     setSecondaryRune(generatedSecondaryRune);
 
     // 🛡️ ITENS
-    const selectedItems = getRandomItems(itemsMock, 6);
+    const selectedItems = getRandomItems(dataDragonData.items, 6);
     setItems(selectedItems);
-  }, []);
+  }, [dataDragonData]);
 
   // Botao enter para gerar os conteudos
   useEffect(() => {

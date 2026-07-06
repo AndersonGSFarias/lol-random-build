@@ -10,7 +10,7 @@ function HeroSection({ onGenerate }) {
       {/* Botão que gera as composições */}
       <GenerateButton onGenerate={onGenerate} />
       <h3 className="text-font-secundary text-[0.875rem]">
-        Clique no <span className="font-bold uppercase">botão</span> ou <span className="font-bold uppercase">enter</span> cima para começar!
+        Clique no <span className="font-bold uppercase">botão</span> <span className="hidden xl:inline-flex">ou</span> <span className=" hidden xl:inline-flex font-bold uppercase">enter</span> cima para começar!
       </h3>
     </section>
   );

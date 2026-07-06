@@ -21,15 +21,18 @@ function RunesPrimary({ rune }) {
         flex items-center 
         border-b-1 border-[#252937]
         pb-[0.5rem]
+
         "
       >
         <img
           src={rune?.treeIcon || waitFirstRune}
           alt=""
-          className="w-[2.5rem] 
+          className="w-[1.875rem] 
         xl:w-[1.625rem] 
         xl:h-[1.625rem] 
-        ml-1.5"
+        ml-[0.675rem]
+
+        "
         />
         <h6
           className="text-[#4A5262] 
@@ -58,8 +61,16 @@ function RunesPrimary({ rune }) {
           {(rune?.runes ?? [null, null, null]).map((subRune, index) => (
             <div key={index} className="flex items-center gap-[2rem] xl:gap-[1.5rem] ml-3.5">
               <img src={subRune?.icon || noReturnRounded} alt={subRune?.name || `Atributo ${index + 1}`} className="w-[1.5rem]" />
-
-              <p className="text-[0.75rem] font-light">{subRune?.name || `Atributo ${index + 1}`}</p>
+              <p
+                title={subRune?.name || `Fragmento ${index + 1}`}
+                className="
+                text-[0.75rem]
+                font-light
+                max-w-[9.5rem]
+                truncate "
+              >
+                {subRune?.name || `Fragmento ${index + 1}`}
+              </p>{" "}
             </div>
           ))}
         </div>

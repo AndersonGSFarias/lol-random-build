@@ -26,10 +26,12 @@ function RunesSecundary({ rune }) {
         <img
           src={rune?.treeIcon || waitSecondRune}
           alt={rune?.treeName || "Runa Secundária"}
-          className="w-[2.5rem] 
+          className="w-[1.875rem] 
         xl:w-[1.625rem] 
         xl:h-[1.625rem] 
-        ml-1.5"
+        ml-[0.675rem]
+
+        "
         />
 
         <h6 className="text-[#4A5262] text-[1rem] border-r border-[#252937] pl-[1.5rem] xl:pl-[1rem] pr-[0.75rem]">{rune?.treeName || " Página"}</h6>
