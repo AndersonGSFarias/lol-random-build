@@ -1,20 +1,5 @@
 @import "tailwindcss";
 
-/* Estilizacao da fonte */
-.eb-garamond {
-  font-family: "EB Garamond", serif;
-  font-optical-sizing: auto;
-  font-style: normal;
-}
-
-.inter {
-  font-family: "Inter", sans-serif;
-  font-optical-sizing: auto;
-  font-style: normal;
-}
-
-/*  Estilizacao da cor */
-
 @theme {
   --color-primary: #0b0d14;
   --color-secundary: #c4972e;
@@ -24,97 +9,9 @@
   --color-font-third: #4e390e;
 }
 
-/* Reset */
-
-html,
-body,
-div,
-span,
-applet,
-object,
-iframe,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p,
-blockquote,
-pre,
-a,
-abbr,
-acronym,
-address,
-big,
-cite,
-code,
-del,
-dfn,
-em,
-img,
-ins,
-kbd,
-q,
-s,
-samp,
-small,
-strike,
-strong,
-sub,
-sup,
-tt,
-var,
-b,
-u,
-i,
-center,
-dl,
-dt,
-dd,
-ol,
-ul,
-li,
-fieldset,
-form,
-label,
-legend,
-table,
-caption,
-tbody,
-tfoot,
-thead,
-tr,
-th,
-td,
-article,
-aside,
-canvas,
-details,
-embed,
-figure,
-figcaption,
-footer,
-header,
-hgroup,
-menu,
-nav,
-output,
-ruby,
-section,
-summary,
-time,
-mark,
-audio,
-video {
+* {
+  box-sizing: border-box;
   font-family: "Inter", sans-serif;
-}
-
-/* Estilização global */
-/* Background */
-
-.bg-radial-custom {
-  background: radial-gradient(circle, rgba(11, 38, 65, 0.4) 0%, rgba(11, 38, 65, 0) 70%);
 }
 
 html,
@@ -127,10 +24,6 @@ body,
   overflow-x: hidden;
 }
 
-* {
-  box-sizing: border-box;
-}
-
 body {
   min-height: 100vh;
   background-color: #0b0d14;
@@ -140,4 +33,16 @@ body {
 #root {
   width: 100%;
   min-height: 100vh;
+}
+
+.eb-garamond {
+  font-family: "EB Garamond", serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
+.inter {
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
 }

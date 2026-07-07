@@ -10,7 +10,7 @@ import { HeroSection } from "./components/HeroSection/HeroSection";
 import { ChampionCard } from "./components/Result/ChampionCard";
 import { ItemsCard } from "./components/Result/ItemsCard";
 import { RunesPrimary } from "./components/Result/RunesPrimary";
-import { RunesSecundary } from "./components/Result/RunesSecondary";
+import { RunesSecondary } from "./components/Result/RunesSecondary";
 import { SpellsCard } from "./components/Result/SpellsCard";
 import { Footer } from "./components/Footer/Footer";
 
@@ -27,29 +27,8 @@ function App() {
   const [primaryRune, setPrimaryRune] = useState(null);
   const [secondaryRune, setSecondaryRune] = useState(null);
   const [items, setItems] = useState([]);
-  // ! Temporario
   const [dataDragonData, setDataDragonData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-
-  // !Teste de geração com api
-  useEffect(() => {
-    async function loadDataDragonData() {
-      try {
-        const data = await getDataDragonData();
-        const normalizedData = normalizeDataDragonData(data);
-
-        console.log("Dados normalizados:", normalizedData);
-
-        setDataDragonData(normalizedData);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    loadDataDragonData();
-  }, []);
 
   // Pre-geracao de imagens
   useEffect(() => {
@@ -146,18 +125,24 @@ function App() {
   return (
     <div className="flex flex-col min-h-screen w-full">
       {/* botão está dentro do Hero */}
-      <HeroSection onGenerate={handleGenerate} />
+      <HeroSection onGenerate={handleGenerate} isLoading={isLoading} />
 
       <main
         className="
-    flex flex-col items-center gap-8 my-[2.188rem] flex-1
-
+    flex 
+    flex-col 
+    items-center 
+    gap-8 
+    my-[2.188rem] 
+    pb-[10rem]
+    flex-1
     xl:grid
     xl:grid-cols-[15.8125rem_15.8125rem_15.8125rem]
     xl:gap-[1.25rem]
     xl:w-[50rem]
     xl:mx-auto
     xl:items-start
+    xl:pb-[10rem]
   "
       >
         <div className="xl:col-span-3 xl:w-full">
@@ -166,7 +151,7 @@ function App() {
 
         <SpellsCard spells={spells} />
         <RunesPrimary rune={primaryRune} />
-        <RunesSecundary rune={secondaryRune} />
+        <RunesSecondary rune={secondaryRune} />
 
         <div className="xl:col-span-3 xl:w-full">
           <ItemsCard items={items} />

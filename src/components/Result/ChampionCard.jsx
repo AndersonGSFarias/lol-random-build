@@ -29,7 +29,7 @@ function ChampionCard({ champion }) {
       <div className="relative z-10 flex gap-[0.75rem] xl:gap-[1.5rem] p-[0.625rem] xl:p-[2.5rem]">
         {/* Ícone do champ */}
         <div className="w-[2.625rem] xl:w-[5.375rem] h-[2.625rem] xl:h-[5.375rem] border border-secundary rounded-[10px] overflow-hidden">
-          <img src={champion?.icon || noReturn} alt={champion?.name || "Campeão não selecionado"} className="w-full h-full object-cover rounded-[15px] scale-110" />
+          <img src={champion?.icon || noReturn} alt={champion?.name || "Campeão não selecionado"} title={champion?.name || "Campeão"} className="w-full h-full object-cover rounded-[15px] scale-110" />
         </div>
 
         <div>

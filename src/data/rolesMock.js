@@ -1,23 +1,28 @@
-// Mock das rotas
+import topIcon from "../assets/rotas/top.png";
+import jungleIcon from "../assets/rotas/jungle.png";
+import midIcon from "../assets/rotas/mid.png";
+import adcIcon from "../assets/rotas/adc.png";
+import supportIcon from "../assets/rotas/support.png";
+
 export const rolesMock = [
   {
     name: "Topo",
-    icon: "/src/assets/rotas/top.png",
+    icon: topIcon,
   },
   {
     name: "Selva",
-    icon: "/src/assets/rotas/jungle.png",
+    icon: jungleIcon,
   },
   {
     name: "Meio",
-    icon: "/src/assets/rotas/mid.png",
+    icon: midIcon,
   },
   {
     name: "Atirador",
-    icon: "/src/assets/rotas/adc.png",
+    icon: adcIcon,
   },
   {
     name: "Suporte",
-    icon: "/src/assets/rotas/support.png",
+    icon: supportIcon,
   },
 ];

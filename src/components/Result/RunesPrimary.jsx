@@ -26,7 +26,8 @@ function RunesPrimary({ rune }) {
       >
         <img
           src={rune?.treeIcon || waitFirstRune}
-          alt=""
+          title={rune?.treeName || "Árvore de Runa Primária"}
+          alt={rune?.treeName || "Árvore de Runa Primária"}
           className="w-[1.875rem] 
         xl:w-[1.625rem] 
         xl:h-[1.625rem] 
@@ -52,7 +53,7 @@ function RunesPrimary({ rune }) {
       <div className="flex flex-col text-[#A7A6A3] my-[0.5rem] gap-y-3">
         {/* Keystone */}
         <div className="flex items-center gap-[1rem] xl:gap-[0.5rem]">
-          <img src={rune?.keystone?.icon || noReturnRounded} alt={rune?.keystone?.name || "Runa principal"} className="w-[3.375rem]" />
+          <img src={rune?.keystone?.icon || noReturnRounded} title={rune?.keystone?.name || "Runa principal"} alt={rune?.keystone?.name || "Runa principal"} className="w-[3.375rem]" />
           <p className="text-[1.25rem] xl:text-[0.9rem] font-bold">{rune?.keystone?.name || "Principal"}</p>
         </div>
 
@@ -60,7 +61,7 @@ function RunesPrimary({ rune }) {
         <div className="flex flex-col gap-y-2.5">
           {(rune?.runes ?? [null, null, null]).map((subRune, index) => (
             <div key={index} className="flex items-center gap-[2rem] xl:gap-[1.5rem] ml-3.5">
-              <img src={subRune?.icon || noReturnRounded} alt={subRune?.name || `Atributo ${index + 1}`} className="w-[1.5rem]" />
+              <img src={subRune?.icon || noReturnRounded} title={subRune?.name || `Atributo ${index + 1}`} alt={subRune?.name || `Atributo ${index + 1}`} className="w-[1.5rem]" />
               <p
                 title={subRune?.name || `Fragmento ${index + 1}`}
                 className="

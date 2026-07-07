@@ -1,7 +1,7 @@
 import waitSecondRune from "../../assets/runas/rune-secundario.png";
 import noReturnRounded from "../../assets/no-return/sem-resposta-redondo.png";
 
-function RunesSecundary({ rune }) {
+function RunesSecondary({ rune }) {
   return (
     <section
       className="
@@ -25,6 +25,7 @@ function RunesSecundary({ rune }) {
       >
         <img
           src={rune?.treeIcon || waitSecondRune}
+          title={rune?.keystone?.name || "Runa Secundária"}
           alt={rune?.treeName || "Runa Secundária"}
           className="w-[1.875rem] 
         xl:w-[1.625rem] 
@@ -42,7 +43,7 @@ function RunesSecundary({ rune }) {
         <div className="flex flex-col gap-y-2.5 pt-2">
           {(rune?.runes ?? [null, null]).map((attribute, index) => (
             <div key={index} className="flex items-center gap-[2rem] xl:gap-[1.5rem] ml-3.5">
-              <img src={attribute?.icon || noReturnRounded} alt={attribute?.name || `Atributo ${index + 1}`} className="w-[1.5rem]" />
+              <img src={attribute?.icon || noReturnRounded} title={attribute?.name || `Atributo ${index + 1}`} alt={attribute?.name || `Atributo ${index + 1}`} className="w-[1.5rem]" />
 
               <p className="text-[0.75rem] font-light">{attribute?.name || `Atributo ${index + 1}`}</p>
             </div>
@@ -53,4 +54,4 @@ function RunesSecundary({ rune }) {
   );
 }
 
-export { RunesSecundary };
+export { RunesSecondary };

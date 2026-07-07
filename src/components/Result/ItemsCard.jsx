@@ -1,4 +1,5 @@
 import noReturnRounded from "../../assets/no-return/sem-resposta-sem-borda.png";
+import shopIcon from "../../assets/itens/shop-button-mobile.png";
 
 function ItemsCard({ items }) {
   return (
@@ -16,7 +17,7 @@ function ItemsCard({ items }) {
       "
     >
       <div className="flex border-b border-[#252937] pb-[0.625rem] pl-[0.7rem] border-b-1 mb-[0.625rem]">
-        <img src="/src/assets/itens/shop-button-mobile.png" alt="" className="w-[1.625rem] h-[1.625rem] rounded-2xl " />
+        <img src={shopIcon} alt="Itens" className="w-[1.625rem] h-[1.625rem] rounded-2xl " />
         <h5 className="text-[#515B6B] text-[1rem] pl-[1.5rem] ">Itens</h5>
       </div>
 
@@ -37,6 +38,7 @@ function ItemsCard({ items }) {
           <figure key={item?.id || index} className="flex flex-col items-center">
             <img
               src={item?.icon || noReturnRounded}
+              title={item?.name || `Item ${index + 1}`}
               alt={item?.name || `Item ${index + 1}`}
               className="
                   w-[2.875rem] 
