@@ -1,12 +1,15 @@
 import noReturn from "../../assets/no-return/sem-resposta-sem-borda.png";
 import noReturnWideScreen from "../../assets/no-return/sem-resposta-wide-sem-borda.png";
+import { LockButton } from "../LockButton/LockButton";
 
 // Card do Herói
-function ChampionCard({ champion }) {
+function ChampionCard({ champion, isLocked, onToggleLock }) {
   return (
     <section
       className="
         relative
+        group
+        overflow-hidden
         bg-[#252937] 
         w-[18.75rem] 
         xl:w-full
@@ -23,8 +26,10 @@ function ChampionCard({ champion }) {
       }}
     >
       {/* Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent rounded-[10px]"></div>
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent rounded-[10px]" />
 
+      {/* Botão do cadeado */}
+      {champion && <LockButton isLocked={isLocked} onToggleLock={onToggleLock} lockedLabel="Destravar campeão" unlockedLabel="Travar campeão" />}
       {/* Conteúdo */}
       <div className="relative z-10 flex gap-[0.75rem] xl:gap-[1.5rem] p-[0.625rem] xl:p-[2.5rem]">
         {/* Ícone do champ */}
@@ -38,7 +43,7 @@ function ChampionCard({ champion }) {
 
           <div className="flex items-center gap-3">
             {/* Ícone da role */}
-            {champion?.roleIcon ? <img src={champion.roleIcon} alt="role" className="w-[1rem] xl:w-[1.875rem]" /> : <span className=" Inter text-secundary text-[0.75rem] font-medium  ">?</span>}
+            {champion?.roleIcon ? <img src={champion.roleIcon} alt="role" className="w-[1rem] xl:w-[1.875rem]" /> : <span className="Inter text-secundary text-[0.75rem] font-medium">?</span>}
 
             {/* Nome da role */}
             <span className="Inter text-[0.75rem] xl:text-[1.125rem] text-white font-bold">{champion?.role || "Rota"}</span>

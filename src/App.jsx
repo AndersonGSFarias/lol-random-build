@@ -18,7 +18,7 @@ import { Footer } from "./components/Footer/Footer";
 import { rolesMock } from "./data/rolesMock";
 
 // Códigos de utilidade
-import { getRandomItem, getRandomItems } from "./utils/random";
+import { getRandomItem } from "./utils/random";
 import { generatePrimaryRune, generateSecondaryRune } from "./utils/runes";
 
 function App() {
@@ -29,6 +29,26 @@ function App() {
   const [items, setItems] = useState([]);
   const [dataDragonData, setDataDragonData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  // Estados das travas
+  const [isChampionLocked, setIsChampionLocked] = useState(false);
+  const [lockedSpells, setLockedSpells] = useState([false, false]);
+  const [isPrimaryRuneLocked, setIsPrimaryRuneLocked] = useState(false);
+  const [isSecondaryRuneLocked, setIsSecondaryRuneLocked] = useState(false);
+  const [lockedItems, setLockedItems] = useState([false, false, false, false, false, false]);
+
+  // Trava dos feitiços
+  const handleToggleSpellLock = (spellIndex) => {
+    if (!spells[spellIndex]) return;
+
+    setLockedSpells((prevState) => prevState.map((isLocked, index) => (index === spellIndex ? !isLocked : isLocked)));
+  };
+
+  // Trava de itens
+  const handleToggleItemLock = (itemIndex) => {
+    if (!items[itemIndex]) return;
+
+    setLockedItems((prevState) => prevState.map((isLocked, index) => (index === itemIndex ? !isLocked : isLocked)));
+  };
 
   // Pre-geracao de imagens
   useEffect(() => {
@@ -72,35 +92,92 @@ function App() {
     if (!dataDragonData) return;
 
     // 🎴 CHAMPION
-    const randomChampion = getRandomItem(dataDragonData.champions);
+    if (!isChampionLocked || !champion) {
+      const randomChampion = getRandomItem(dataDragonData.champions);
 
-    // 🎯 ROLE
-    const randomRole = getRandomItem(rolesMock);
+      // 🎯 ROLE
+      const randomRole = getRandomItem(rolesMock);
 
-    const championWithRole = {
-      ...randomChampion,
-      role: randomRole.name,
-      roleIcon: randomRole.icon,
-    };
+      const championWithRole = {
+        ...randomChampion,
+        role: randomRole.name,
+        roleIcon: randomRole.icon,
+      };
 
-    setChampion(championWithRole);
+      setChampion(championWithRole);
+    }
 
     // 🎲 SPELLS
-    const selectedSpells = getRandomItems(dataDragonData.spells, 2);
-    setSpells(selectedSpells);
+    const shouldGenerateSpells = spells.length === 0 || lockedSpells.some((isLocked) => !isLocked);
+
+    if (shouldGenerateSpells) {
+      const newSpells = [...spells];
+
+      const lockedSpellIds = newSpells.filter((_, index) => lockedSpells[index]).map((spell) => spell?.id);
+
+      const availableSpells = dataDragonData.spells.filter((spell) => !lockedSpellIds.includes(spell.id));
+
+      for (let index = 0; index < 2; index++) {
+        const isSpellLocked = lockedSpells[index];
+        const hasSpell = Boolean(newSpells[index]);
+
+        if (!isSpellLocked || !hasSpell) {
+          const alreadySelectedIds = newSpells.filter(Boolean).map((spell) => spell.id);
+
+          const possibleSpells = availableSpells.filter((spell) => !alreadySelectedIds.includes(spell.id));
+
+          newSpells[index] = getRandomItem(possibleSpells);
+        }
+      }
+
+      setSpells(newSpells);
+    }
 
     // 🔮 RUNAS
-    const generatedPrimaryRune = generatePrimaryRune(dataDragonData.runePages);
+    let currentPrimaryRune = primaryRune;
+    let currentSecondaryRune = secondaryRune;
 
-    const generatedSecondaryRune = generateSecondaryRune(dataDragonData.runePages, generatedPrimaryRune.treeId);
+    if (!isPrimaryRuneLocked || !primaryRune) {
+      currentPrimaryRune = generatePrimaryRune(dataDragonData.runePages);
+      setPrimaryRune(currentPrimaryRune);
+    }
 
-    setPrimaryRune(generatedPrimaryRune);
-    setSecondaryRune(generatedSecondaryRune);
+    const secondaryRuneIsInvalid = currentSecondaryRune && currentPrimaryRune && currentSecondaryRune.treeId === currentPrimaryRune.treeId;
+
+    if (!isSecondaryRuneLocked || !secondaryRune || secondaryRuneIsInvalid) {
+      currentSecondaryRune = generateSecondaryRune(dataDragonData.runePages, currentPrimaryRune.treeId);
+
+      setSecondaryRune(currentSecondaryRune);
+    }
 
     // 🛡️ ITENS
-    const selectedItems = getRandomItems(dataDragonData.items, 6);
-    setItems(selectedItems);
-  }, [dataDragonData]);
+
+    // Geração de itens
+    const shouldGenerateItems = items.length === 0 || lockedItems.some((isLocked) => !isLocked);
+
+    if (shouldGenerateItems) {
+      const newItems = [...items];
+
+      const lockedItemIds = newItems.filter((_, index) => lockedItems[index]).map((item) => item?.id);
+
+      const availableItems = dataDragonData.items.filter((item) => !lockedItemIds.includes(item.id));
+
+      for (let index = 0; index < 6; index++) {
+        const isItemLocked = lockedItems[index];
+        const hasItem = Boolean(newItems[index]);
+
+        if (!isItemLocked || !hasItem) {
+          const alreadySelectedIds = newItems.filter(Boolean).map((item) => item.id);
+
+          const possibleItems = availableItems.filter((item) => !alreadySelectedIds.includes(item.id));
+
+          newItems[index] = getRandomItem(possibleItems);
+        }
+      }
+
+      setItems(newItems);
+    }
+  }, [dataDragonData, isChampionLocked, champion, lockedSpells, spells, isPrimaryRuneLocked, primaryRune, isSecondaryRuneLocked, secondaryRune, lockedItems, items]);
 
   // Botao enter para gerar os conteudos
   useEffect(() => {
@@ -146,15 +223,15 @@ function App() {
   "
       >
         <div className="xl:col-span-3 xl:w-full">
-          <ChampionCard champion={champion} />
+          <ChampionCard champion={champion} isLocked={isChampionLocked} onToggleLock={() => setIsChampionLocked((prevState) => !prevState)} />
         </div>
 
-        <SpellsCard spells={spells} />
-        <RunesPrimary rune={primaryRune} />
-        <RunesSecondary rune={secondaryRune} />
+        <SpellsCard spells={spells} lockedSpells={lockedSpells} onToggleSpellLock={handleToggleSpellLock} />
+        <RunesPrimary rune={primaryRune} isLocked={isPrimaryRuneLocked} onToggleLock={() => setIsPrimaryRuneLocked((prevState) => !prevState)} />
+        <RunesSecondary rune={secondaryRune} isLocked={isSecondaryRuneLocked} onToggleLock={() => setIsSecondaryRuneLocked((prevState) => !prevState)} />
 
         <div className="xl:col-span-3 xl:w-full">
-          <ItemsCard items={items} />
+          <ItemsCard items={items} lockedItems={lockedItems} onToggleItemLock={handleToggleItemLock} />
         </div>
       </main>
       <Footer />

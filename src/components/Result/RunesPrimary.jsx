@@ -1,21 +1,26 @@
 import waitFirstRune from "../../assets/runas/rune-principal.png";
 import noReturnRounded from "../../assets/no-return/sem-resposta-redondo.png";
+import { LockButton } from "../LockButton/LockButton";
 
-function RunesPrimary({ rune }) {
+function RunesPrimary({ rune, isLocked, onToggleLock }) {
   return (
     <section
       className="
-        bg-[#080E1B] 
-        w-[18.75rem] 
-        xl:w-[15.8125rem] 
-        xl:h-[14.375rem]
-        flex flex-col
-        border-1 border-solid border-secundary 
-        rounded-[10px]
-        px-[1.25rem]
-        py-[0.625rem]
-        "
+    relative
+    group
+    overflow-hidden
+    bg-[#080E1B] 
+    w-[18.75rem] 
+    xl:w-[15.8125rem] 
+    xl:h-[14.375rem]
+    flex flex-col
+    border-1 border-solid border-secundary 
+    rounded-[10px]
+    px-[1.25rem]
+    py-[0.625rem]
+  "
     >
+      {rune && <LockButton isLocked={isLocked} onToggleLock={onToggleLock} lockedLabel="Destravar runa primária" unlockedLabel="Travar runa primária" />}
       <div
         className="
         flex items-center 

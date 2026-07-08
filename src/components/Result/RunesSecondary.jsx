@@ -1,21 +1,26 @@
 import waitSecondRune from "../../assets/runas/rune-secundario.png";
 import noReturnRounded from "../../assets/no-return/sem-resposta-redondo.png";
+import { LockButton } from "../LockButton/LockButton";
 
-function RunesSecondary({ rune }) {
+function RunesSecondary({ rune, isLocked, onToggleLock }) {
   return (
     <section
       className="
-        bg-[#080E1B] 
-        w-[18.75rem] 
-        xl:w-[15.8125rem] 
-        xl:h-[14.375rem]
-        flex flex-col
-        border-1 border-solid border-secundary 
-        rounded-[10px]
-        px-[1.25rem]
-        py-[0.625rem]
-        "
+    relative
+    group
+    overflow-hidden
+    bg-[#080E1B] 
+    w-[18.75rem] 
+    xl:w-[15.8125rem] 
+    xl:h-[14.375rem]
+    flex flex-col
+    border-1 border-solid border-secundary 
+    rounded-[10px]
+    px-[1.25rem]
+    py-[0.625rem]
+  "
     >
+      {rune && <LockButton isLocked={isLocked} onToggleLock={onToggleLock} lockedLabel="Destravar runa secundária" unlockedLabel="Travar runa secundária" />}
       <div
         className="
         flex items-center
@@ -25,7 +30,7 @@ function RunesSecondary({ rune }) {
       >
         <img
           src={rune?.treeIcon || waitSecondRune}
-          title={rune?.keystone?.name || "Runa Secundária"}
+          title={rune?.treeName || "Runa Secundária"}
           alt={rune?.treeName || "Runa Secundária"}
           className="w-[1.875rem] 
         xl:w-[1.625rem] 
