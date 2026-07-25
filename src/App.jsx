@@ -29,6 +29,10 @@ function App() {
   const [items, setItems] = useState([]);
   const [dataDragonData, setDataDragonData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  // Barra de pesquisa
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchSuggestions, setSearchSuggestions] = useState([]);
+
   // Estados das travas
   const [isChampionLocked, setIsChampionLocked] = useState(false);
   const [lockedSpells, setLockedSpells] = useState([false, false]);
@@ -65,7 +69,7 @@ function App() {
 
         const spellImages = normalizedData.spells.map((spell) => spell.icon);
 
-        const itemImages = normalizedData.items.map((item) => item.icon);
+        const itemImages = [...normalizedData.items.map((item) => item.icon), ...normalizedData.boots.map((boot) => boot.icon)];
 
         const runeImages = normalizedData.runePages.flatMap((runePage) => {
           const keystoneImages = runePage.keystones.map((keystone) => keystone.icon);
@@ -88,45 +92,156 @@ function App() {
     loadDataDragonData();
   }, []);
 
+  // Corretor do texto
+  const normalizeSearchText = (text) => {
+    return text
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .trim();
+  };
+
+  // Pesquisa de campeão
+  const handleSearchChampion = (value) => {
+    setSearchTerm(value);
+
+    if (!dataDragonData) return;
+
+    const normalizedValue = normalizeSearchText(value);
+
+    if (!normalizedValue) {
+      setSearchSuggestions([]);
+      return;
+    }
+
+    const filteredChampions = dataDragonData.champions
+      .filter((champion) => {
+        const normalizedChampionName = normalizeSearchText(champion.name);
+
+        return normalizedChampionName.startsWith(normalizedValue) || normalizedChampionName.includes(normalizedValue);
+      })
+      .slice(0, 6);
+
+    setSearchSuggestions(filteredChampions);
+
+    const exactChampion = filteredChampions.find((champion) => {
+      const normalizedChampionName = normalizeSearchText(champion.name);
+
+      return normalizedChampionName === normalizedValue;
+    });
+
+    if (!exactChampion) return;
+
+    selectChampion(exactChampion);
+  };
+  const selectChampion = (selectedChampion) => {
+    const randomRole = getRandomItem(rolesMock);
+
+    const championWithRole = {
+      ...selectedChampion,
+      role: randomRole.name,
+      roleIcon: randomRole.icon,
+    };
+
+    setChampion(championWithRole);
+    setIsChampionLocked(true);
+    setSearchTerm(selectedChampion.name);
+    setSearchSuggestions([]);
+  };
+
+  const isJungleRole = (roleName) => {
+    if (!roleName) return false;
+
+    const normalizedRole = normalizeSearchText(roleName);
+
+    return normalizedRole === "selva" || normalizedRole === "jungle";
+  };
+
+  const isSmiteSpell = (spell) => {
+    if (!spell) return false;
+
+    const normalizedSpellName = normalizeSearchText(spell.name);
+    const normalizedSpellId = normalizeSearchText(spell.id);
+
+    return normalizedSpellName === "golpear" || normalizedSpellName === "smite" || normalizedSpellId.includes("smite");
+  };
+
   const handleGenerate = useCallback(() => {
     if (!dataDragonData) return;
 
     // 🎴 CHAMPION
+    let currentChampion = champion;
+
     if (!isChampionLocked || !champion) {
       const randomChampion = getRandomItem(dataDragonData.champions);
-
-      // 🎯 ROLE
       const randomRole = getRandomItem(rolesMock);
 
-      const championWithRole = {
+      currentChampion = {
         ...randomChampion,
         role: randomRole.name,
         roleIcon: randomRole.icon,
       };
 
-      setChampion(championWithRole);
+      setChampion(currentChampion);
     }
 
     // 🎲 SPELLS
-    const shouldGenerateSpells = spells.length === 0 || lockedSpells.some((isLocked) => !isLocked);
+    // 🎲 SPELLS
+    const currentRoleIsJungle = isJungleRole(currentChampion?.role);
+
+    const smiteSpell = dataDragonData.spells.find((spell) => isSmiteSpell(spell));
+
+    const shouldGenerateSpells = spells.length === 0 || lockedSpells.some((isLocked) => !isLocked) || spells.some((spell) => !currentRoleIsJungle && isSmiteSpell(spell));
 
     if (shouldGenerateSpells) {
       const newSpells = [...spells];
 
-      const lockedSpellIds = newSpells.filter((_, index) => lockedSpells[index]).map((spell) => spell?.id);
+      const lockedSpellIds = newSpells
+        .filter((spell, index) => {
+          const isLocked = lockedSpells[index];
+          const isInvalidSmite = !currentRoleIsJungle && isSmiteSpell(spell);
 
-      const availableSpells = dataDragonData.spells.filter((spell) => !lockedSpellIds.includes(spell.id));
+          return isLocked && !isInvalidSmite;
+        })
+        .map((spell) => spell?.id);
+
+      const availableSpells = dataDragonData.spells.filter((spell) => {
+        const isAlreadyLocked = lockedSpellIds.includes(spell.id);
+
+        if (isAlreadyLocked) return false;
+
+        if (!currentRoleIsJungle && isSmiteSpell(spell)) {
+          return false;
+        }
+
+        return true;
+      });
 
       for (let index = 0; index < 2; index++) {
-        const isSpellLocked = lockedSpells[index];
-        const hasSpell = Boolean(newSpells[index]);
+        const currentSpell = newSpells[index];
 
-        if (!isSpellLocked || !hasSpell) {
+        const isSpellLocked = lockedSpells[index];
+        const hasSpell = Boolean(currentSpell);
+        const isInvalidSmite = !currentRoleIsJungle && isSmiteSpell(currentSpell);
+
+        if (!isSpellLocked || !hasSpell || isInvalidSmite) {
           const alreadySelectedIds = newSpells.filter(Boolean).map((spell) => spell.id);
 
           const possibleSpells = availableSpells.filter((spell) => !alreadySelectedIds.includes(spell.id));
 
           newSpells[index] = getRandomItem(possibleSpells);
+        }
+      }
+
+      if (currentRoleIsJungle && smiteSpell) {
+        const alreadyHasSmite = newSpells.some((spell) => isSmiteSpell(spell));
+
+        if (!alreadyHasSmite) {
+          const firstUnlockedIndex = lockedSpells.findIndex((isLocked) => !isLocked);
+
+          const indexToReplace = firstUnlockedIndex !== -1 ? firstUnlockedIndex : 0;
+
+          newSpells[indexToReplace] = smiteSpell;
         }
       }
 
@@ -158,21 +273,40 @@ function App() {
     if (shouldGenerateItems) {
       const newItems = [...items];
 
-      const lockedItemIds = newItems.filter((_, index) => lockedItems[index]).map((item) => item?.id);
+      const lockedNormalItemIds = newItems.filter((item, index) => index < 5 && lockedItems[index] && item).map((item) => item.id);
 
-      const availableItems = dataDragonData.items.filter((item) => !lockedItemIds.includes(item.id));
+      const lockedBootIds = newItems.filter((item, index) => index === 5 && lockedItems[index] && item).map((item) => item.id);
+
+      const availableNormalItems = dataDragonData.items.filter((item) => !lockedNormalItemIds.includes(item.id));
+
+      const availableBoots = dataDragonData.boots.filter((boot) => !lockedBootIds.includes(boot.id));
 
       for (let index = 0; index < 6; index++) {
         const isItemLocked = lockedItems[index];
         const hasItem = Boolean(newItems[index]);
+        const isBootSlot = index === 5;
+        const currentItemIsBoot = newItems[index]?.tags?.includes("Boots");
 
-        if (!isItemLocked || !hasItem) {
+        if (isItemLocked && hasItem) {
+          if (!isBootSlot || currentItemIsBoot) {
+            continue;
+          }
+        }
+
+        if (isBootSlot) {
           const alreadySelectedIds = newItems.filter(Boolean).map((item) => item.id);
 
-          const possibleItems = availableItems.filter((item) => !alreadySelectedIds.includes(item.id));
+          const possibleBoots = availableBoots.filter((boot) => !alreadySelectedIds.includes(boot.id));
 
-          newItems[index] = getRandomItem(possibleItems);
+          newItems[index] = getRandomItem(possibleBoots);
+          continue;
         }
+
+        const alreadySelectedIds = newItems.filter(Boolean).map((item) => item.id);
+
+        const possibleItems = availableNormalItems.filter((item) => !alreadySelectedIds.includes(item.id));
+
+        newItems[index] = getRandomItem(possibleItems);
       }
 
       setItems(newItems);
@@ -202,15 +336,14 @@ function App() {
   return (
     <div className="flex flex-col min-h-screen w-full">
       {/* botão está dentro do Hero */}
-      <HeroSection onGenerate={handleGenerate} isLoading={isLoading} />
-
+      <HeroSection onGenerate={handleGenerate} isLoading={isLoading} searchTerm={searchTerm} onSearchChampion={handleSearchChampion} searchSuggestions={searchSuggestions} onSelectChampion={selectChampion} />
       <main
         className="
     flex 
     flex-col 
     items-center 
     gap-8 
-    my-[2.188rem] 
+    my-[1.25rem] 
     pb-[10rem]
     flex-1
     xl:grid

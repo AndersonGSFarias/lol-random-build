@@ -28,36 +28,49 @@ export function normalizeSpells(spellsData, version) {
     }));
 }
 
-function isLegendarySummonersRiftItem(item) {
+function isValidSummonersRiftItem(item) {
   const isAvailableOnSummonersRift = item.maps?.["11"] === true;
-
   const hasIcon = Boolean(item.image?.full);
-
-  const hasValidGold = item.gold?.total >= 2000;
-
   const isPurchasable = item.gold?.purchasable === true;
-
-  const isFinalItem = !item.into || item.into.length === 0;
-
-  const hasRecipe = Array.isArray(item.from) && item.from.length > 0;
-
   const isNotConsumed = item.consumed !== true;
-
   const isInStore = item.inStore !== false;
-
   const isNotChampionSpecific = !item.requiredChampion;
+
+  return isAvailableOnSummonersRift && hasIcon && isPurchasable && isNotConsumed && isInStore && isNotChampionSpecific;
+}
+
+function isFinalItem(item) {
+  return !item.into || item.into.length === 0;
+}
+
+function hasRecipe(item) {
+  return Array.isArray(item.from) && item.from.length > 0;
+}
+
+function isBootItem(item) {
+  return item.tags?.includes("Boots");
+}
+
+function isLegendarySummonersRiftItem(item) {
+  const hasValidGold = item.gold?.total >= 2000;
 
   const blockedTags = ["Consumable", "Trinket", "Boots", "Jungle", "Lane"];
 
   const hasBlockedTag = item.tags?.some((tag) => blockedTags.includes(tag));
 
-  return isAvailableOnSummonersRift && hasIcon && hasValidGold && isPurchasable && isFinalItem && hasRecipe && isNotConsumed && isInStore && isNotChampionSpecific && !hasBlockedTag;
+  return isValidSummonersRiftItem(item) && hasValidGold && isFinalItem(item) && hasRecipe(item) && !hasBlockedTag;
+}
+
+function isSummonersRiftBoot(item) {
+  return isValidSummonersRiftItem(item) && isBootItem(item) && isFinalItem(item);
 }
 
 export function normalizeItems(itemsData, version) {
-  return Object.entries(itemsData.data)
-    .filter(([, item]) => isLegendarySummonersRiftItem(item))
-    .map(([id, item]) => ({
+  const items = [];
+  const boots = [];
+
+  Object.entries(itemsData.data).forEach(([id, item]) => {
+    const normalizedItem = {
       id,
       name: item.name,
       description: item.description,
@@ -67,7 +80,21 @@ export function normalizeItems(itemsData, version) {
       maps: item.maps,
       into: item.into,
       from: item.from,
-    }));
+    };
+
+    if (isLegendarySummonersRiftItem(item)) {
+      items.push(normalizedItem);
+    }
+
+    if (isSummonersRiftBoot(item)) {
+      boots.push(normalizedItem);
+    }
+  });
+
+  return {
+    items,
+    boots,
+  };
 }
 
 export function normalizeRunePages(runesData) {
@@ -95,11 +122,14 @@ export function normalizeRunePages(runesData) {
 export function normalizeDataDragonData(dataDragonData) {
   const { version, championsData, spellsData, itemsData, runesData } = dataDragonData;
 
+  const normalizedItems = normalizeItems(itemsData, version);
+
   return {
     version,
     champions: normalizeChampions(championsData, version),
     spells: normalizeSpells(spellsData, version),
-    items: normalizeItems(itemsData, version),
+    items: normalizedItems.items,
+    boots: normalizedItems.boots,
     runePages: normalizeRunePages(runesData),
   };
 }
